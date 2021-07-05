@@ -3,18 +3,20 @@ package com.github.pambrose
 import io.kvision.Application
 import io.kvision.form.text.Text
 import io.kvision.html.Button
+import io.kvision.html.ButtonStyle.OUTLINESECONDARY
 import io.kvision.html.ButtonStyle.PRIMARY
 import io.kvision.html.P
 import io.kvision.html.button
+import io.kvision.html.div
 import io.kvision.i18n.DefaultI18nManager
 import io.kvision.i18n.I18n
 import io.kvision.modal.Dialog
 import io.kvision.module
 import io.kvision.panel.VPanel
-import io.kvision.panel.hPanel
 import io.kvision.panel.root
 import io.kvision.panel.vPanel
 import io.kvision.startApplication
+import io.kvision.utils.px
 import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -40,35 +42,39 @@ class App : Application() {
       val choices = Model.choices(title)
       panel.apply {
         removeAll()
-        vPanel {
-          add(P(content, true))
-        }
+        div {
+          margin = 10.px
 
-        hPanel {
-          choices.forEach { p ->
-            button(p.choice, style = PRIMARY) {
-              onClick {
-                val submit = Button("Submit", disabled = true)
-                val dialog =
-                  Dialog<String>("Reasoning") {
-                    val input = Text(label = "Reason for your decision:") {
-                      placeholder = "I made this decision because..."
-                      setEventListener<Text> {
-                        keyup = { e ->
-                          println("Key pressed ${value.isNullOrEmpty()} $value")
-                          submit.disabled = value.isNullOrEmpty()
+          vPanel {
+            add(P(content, true))
+          }
+
+          vPanel(spacing = 4) {
+            choices.forEach { p ->
+              button(p.choice, style = PRIMARY) {
+                onClick {
+                  val submit = Button("OK", disabled = true)
+                  val dialog =
+                    Dialog<String>("Reasoning") {
+                      val input =
+                        Text(label = "Reason for your decision:") {
+                          placeholder = "I made this decision because..."
+                          setEventListener<Text> {
+                            keyup = { e ->
+                              submit.disabled = value.isNullOrBlank()
+                            }
+                          }
                         }
-                      }
+                      add(input)
+                      addButton(Button("Cancel", style = OUTLINESECONDARY).also { it.onClick { setResult("") } })
+                      addButton(submit.also { it.onClick { setResult(input.value) } })
                     }
-                    add(input)
-                    addButton(submit.also { it.onClick { setResult(input.value) } })
-                    addButton(Button("Cancel").also { it.onClick { setResult("") } })
-                  }
 
-                AppScope.launch {
-                  dialog.getResult().also {
-                    if (!it.isNullOrEmpty())
-                      assignPanel(p.title, panel)
+                  AppScope.launch {
+                    dialog.getResult().also {
+                      if (!it.isNullOrBlank())
+                        assignPanel(p.title, panel)
+                    }
                   }
                 }
               }
