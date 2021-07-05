@@ -28,7 +28,7 @@ val hikariVersion: String by project
 val h2Version: String by project
 val pgsqlVersion: String by project
 val kweryVersion: String by project
-val flexmark_version: String by project
+val flexmarkVersion: String by project
 val logbackVersion: String by project
 val commonsCodecVersion: String by project
 val jdbcNamedParametersVersion: String by project
@@ -98,7 +98,7 @@ kotlin {
                 implementation("commons-codec:commons-codec:$commonsCodecVersion")
                 implementation("com.axiomalaska:jdbc-named-parameters:$jdbcNamedParametersVersion")
                 implementation("com.github.andrewoma.kwery:core:$kweryVersion")
-                implementation("com.vladsch.flexmark:flexmark:$flexmark_version")
+                implementation("com.vladsch.flexmark:flexmark:$flexmarkVersion")
             }
         }
         val backendTest by getting {

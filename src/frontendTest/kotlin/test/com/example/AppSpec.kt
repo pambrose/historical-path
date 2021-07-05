@@ -6,10 +6,10 @@ import kotlin.test.assertTrue
 
 class AppSpec : SimpleSpec {
 
-    @Test
-    fun render() {
-        run {
-            assertTrue(true, "Dummy test")
-        }
+  @Test
+  fun render() {
+    run {
+      assertTrue(true, "Dummy test")
     }
+  }
 }
