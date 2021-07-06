@@ -71,6 +71,7 @@ kotlin {
         }
         binaries.executable()
     }
+
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -158,6 +159,7 @@ tasks {
         outputs.file("$projectDir/src/frontendMain/resources/i18n/messages.pot")
     }
 }
+
 afterEvaluate {
     tasks {
         getByName("frontendProcessResources", Copy::class) {

@@ -1,7 +1,8 @@
 package com.github.pambrose
 
-class Slide(val title: String, val content: String) {
+class Slide(val title: String) {
   var parentSlide: Slide? = null
+  var content: String = ""
   val choices = mutableMapOf<String, String>()
 
   init {
@@ -16,8 +17,8 @@ class Slide(val title: String, val content: String) {
   companion object {
     val allSlides = mutableMapOf<String, Slide>()
 
-    fun slide(title: String, content: String, block: Slide.() -> Unit = { }) {
-      Slide(title, content).block()
+    fun slide(title: String, block: Slide.() -> Unit = { }) {
+      Slide(title).block()
     }
 
     fun findSlide(title: String) =
