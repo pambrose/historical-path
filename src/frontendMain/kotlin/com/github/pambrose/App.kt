@@ -114,15 +114,15 @@ class App : Application() {
   }
 
   fun Container.addButtons(choices: List<ChoiceTitle>, mainPanel: Container) {
-    choices.forEach { p ->
-      button(p.choice, style = PRIMARY) {
+    choices.forEach { ct ->
+      button(ct.choice, style = PRIMARY) {
         onClick {
           val submit = Button("OK", disabled = true)
           val dialog =
             Dialog<String>("Reasoning") {
               val input =
                 Text(label = "Reason for your decision:") {
-                  placeholder = "I made this decision because..."
+                  placeholder = """I chose "${ct.choice}" because..."""
                   setEventListener<Text> {
                     keyup = { e ->
                       submit.disabled = value.isNullOrBlank()
@@ -136,7 +136,7 @@ class App : Application() {
 
           AppScope.launch {
             dialog.getResult()?.also { response ->
-              if (response.isNotBlank()) mainPanel.refreshPanel(p.title)
+              if (response.isNotBlank()) mainPanel.refreshPanel(ct.title)
             }
           }
         }
