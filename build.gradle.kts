@@ -6,6 +6,8 @@ plugins {
     val kotlinVersion: String by System.getProperties()
     kotlin("plugin.serialization") version kotlinVersion
     kotlin("multiplatform") version kotlinVersion
+    val versionsVersion: String by System.getProperties()
+    id("com.github.ben-manes.versions") version versionsVersion
     val kvisionVersion: String by System.getProperties()
     id("kvision") version kvisionVersion
 }
