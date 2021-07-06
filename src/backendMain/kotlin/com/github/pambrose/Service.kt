@@ -28,8 +28,6 @@ actual class ContentService : IContentService {
     findSlide(title).choiceOrientation
 
   companion object {
-    val rootSlide = "Season to Leave"
-
     init {
       slide("Season to Leave") {
         content =
@@ -71,9 +69,11 @@ actual class ContentService : IContentService {
       slide("Warm Jacket1") {
         content = "Description for Warm Jacket1"
       }
+
       slide("Warm Jacket2") {
         content = "Description for Warm Jacket2"
       }
+
       slide("Warm Jacket3") {
         content = "Description for Warm Jacket3"
       }

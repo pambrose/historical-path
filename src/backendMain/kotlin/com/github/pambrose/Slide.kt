@@ -17,13 +17,14 @@ class Slide(val title: String) {
 
   companion object {
     val allSlides = mutableMapOf<String, Slide>()
+    lateinit var rootSlide: Slide
 
     fun slide(title: String, block: Slide.() -> Unit = { }) {
       Slide(title).block()
     }
 
     fun findSlide(title: String) =
-      (if (title == "/") allSlides[ContentService.rootSlide] else allSlides[title]) ?: error("Invalid title: $title")
+      (if (title == "/") rootSlide else allSlides[title]) ?: error("Invalid title: $title")
 
     fun verifySlides() {
       allSlides.forEach { title, slide ->
@@ -34,6 +35,15 @@ class Slide(val title: String) {
           destSlide.parentSlide = slide
         }
       }
+
+      rootSlide =
+        allSlides.values.filter { it.parentSlide == null }.let { nullParents ->
+          when {
+            nullParents.size > 1 -> error("Multiple top-level slides: ${nullParents.map { it.title }}")
+            nullParents.size == 0 -> error("Missing a top-level slide")
+            else -> nullParents.first()
+          }
+        }
     }
   }
 }

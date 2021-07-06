@@ -92,44 +92,11 @@ class App : Application() {
 
     val root = root("kvapp") {}
 
-
     AppScope.launch {
       val panel = VPanel()
       root.add(
         VPanel {
           add(panel)
-
-//          hPanel {
-//            button("Choice 1", style = PRIMARY) {
-//              onClick {
-//                AppScope.launch {
-//                  panel.apply {
-//                    removeAll()
-//                    add(P(Model.content("Hello world from client!"), true))
-//                  }
-//                }
-//              }
-//            }
-//
-//            button("Choice 2", style = PRIMARY) {
-//              onClick {
-//                AppScope.launch {
-//                  val t = Text(label = "Decision Explanation") {
-//                    placeholder = "I made this decision because..."
-//                  }
-//                  val dialog = Dialog<String>("Dialog with result") {
-//                    add(Span("Press a button"))
-//                    add(t)
-//                    addButton(Button("Button").onClick {
-//                      setResult(t.value)
-//                    })
-//                  }
-//                  val result = dialog.getResult()
-//                  console.log(result)
-//                }
-//              }
-//            }
-//          }
         })
       assignPanel("/", panel)
     }

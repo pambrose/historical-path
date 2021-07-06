@@ -12,3 +12,6 @@ interface IContentService {
 
 @Serializable
 class ChoiceTitle(val choice: String, val title: String)
+
+@Serializable
+enum class ChoiceOrientation { VERTICAL, HORIZONTAL }
