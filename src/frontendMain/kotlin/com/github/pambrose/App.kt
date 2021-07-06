@@ -45,53 +45,48 @@ class App : Application() {
         VPanel {
           add(panel)
         })
-      assignPanel("/", panel)
+      panel.refreshPanel("/")
     }
   }
 
-  suspend fun assignPanel(title: String, panel: Container) {
+  suspend fun Container.refreshPanel(title: String) {
     val content = Model.content(title)
     val choices = Model.choices(title)
     val choiceOrientation = Model.choiceOrientation(title)
     val parentTitles = Model.parentTitles(title)
-    panel.apply {
-      removeAll()
-      div {
-        margin = 10.px
 
-        vPanel {
-          add(P(content, true))
-        }
+    removeAll()
 
-        if (choiceOrientation == VERTICAL)
-          vPanel(spacing = 4) { addButtons(choices, panel) }
-        else
-          hPanel(spacing = 4) { addButtons(choices, panel) }
+    div {
+      margin = 10.px
 
-        if (parentTitles.isNotEmpty()) {
-          div {
-            marginTop = 10.px
+      vPanel {
+        add(P(content, true))
+      }
 
-            vPanel {
-              button("Go Back In Time...", style = SUCCESS) {
-                onClick {
-                  val dialog =
-                    Dialog<String>("Go Back To...") {
-                      vPanel(spacing = 4) {
-                        parentTitles.forEach { title ->
-                          button(title, style = PRIMARY) {
-                            onClick {
-                              setResult(title)
-                            }
-                          }
-                        }
+      if (choiceOrientation == VERTICAL)
+        vPanel(spacing = 4) { addButtons(choices, this@refreshPanel) }
+      else
+        hPanel(spacing = 4) { addButtons(choices, this@refreshPanel) }
+
+      if (parentTitles.isNotEmpty()) {
+        div {
+          marginTop = 10.px
+
+          vPanel {
+            button("Go Back In Time...", style = SUCCESS) {
+              onClick {
+                val dialog =
+                  Dialog<String>("Go Back To...") {
+                    vPanel(spacing = 4) {
+                      parentTitles.forEach { title ->
+                        button(title, style = PRIMARY) { onClick { setResult(title) } }
                       }
                     }
-                  AppScope.launch {
-                    dialog.getResult()?.also { title ->
-                      if (title.isNotBlank())
-                        assignPanel(title, panel)
-                    }
+                  }
+                AppScope.launch {
+                  dialog.getResult()?.also { title ->
+                    if (title.isNotBlank()) this@refreshPanel.refreshPanel(title)
                   }
                 }
               }
@@ -125,8 +120,7 @@ class App : Application() {
 
           AppScope.launch {
             dialog.getResult()?.also { response ->
-              if (response.isNotBlank())
-                assignPanel(p.title, panel)
+              if (response.isNotBlank()) panel.refreshPanel(p.title)
             }
           }
         }
