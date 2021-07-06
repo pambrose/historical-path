@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @KVService
 interface IContentService {
+  suspend fun title(title: String): String
   suspend fun content(title: String): String
   suspend fun choices(title: String): List<ChoiceTitle>
   suspend fun choiceOrientation(title: String): ChoiceOrientation

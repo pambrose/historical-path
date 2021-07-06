@@ -2,13 +2,16 @@ package com.github.pambrose
 
 import com.github.pambrose.ChoiceOrientation.VERTICAL
 import io.kvision.Application
+import io.kvision.core.Background
+import io.kvision.core.Border
+import io.kvision.core.BorderStyle.SOLID
+import io.kvision.core.Col.GRAY
+import io.kvision.core.Col.WHITE
+import io.kvision.core.Color
 import io.kvision.core.Container
 import io.kvision.form.text.Text
-import io.kvision.html.Button
+import io.kvision.html.*
 import io.kvision.html.ButtonStyle.*
-import io.kvision.html.P
-import io.kvision.html.button
-import io.kvision.html.div
 import io.kvision.i18n.DefaultI18nManager
 import io.kvision.i18n.I18n
 import io.kvision.modal.Dialog
@@ -49,25 +52,37 @@ class App : Application() {
     }
   }
 
-  suspend fun Container.refreshPanel(title: String) {
-    val content = Model.content(title)
-    val choices = Model.choices(title)
-    val choiceOrientation = Model.choiceOrientation(title)
-    val parentTitles = Model.parentTitles(title)
+  suspend fun Container.refreshPanel(name: String) {
+    val title = Model.title(name)
+    val content = Model.content(name)
+    val choices = Model.choices(name)
+    val choiceOrientation = Model.choiceOrientation(name)
+    val parentTitles = Model.parentTitles(name)
 
     removeAll()
 
     div {
       margin = 10.px
 
-      vPanel {
+      div {
+        background = Background(Color.rgb(53, 121, 246))
+        color = Color.name(WHITE)
+        h1 { +title }
+      }
+
+      div {
+        border = Border(2.px, SOLID, Color.name(GRAY))
+        padding = 25.px
         add(P(content, true))
       }
 
-      if (choiceOrientation == VERTICAL)
-        vPanel(spacing = 4) { addButtons(choices, this@refreshPanel) }
-      else
-        hPanel(spacing = 4) { addButtons(choices, this@refreshPanel) }
+      div {
+        marginTop = 10.px
+        if (choiceOrientation == VERTICAL)
+          vPanel(spacing = 4) { addButtons(choices, this@refreshPanel) }
+        else
+          hPanel(spacing = 4) { addButtons(choices, this@refreshPanel) }
+      }
 
       if (parentTitles.isNotEmpty()) {
         div {
@@ -84,6 +99,7 @@ class App : Application() {
                       }
                     }
                   }
+
                 AppScope.launch {
                   dialog.getResult()?.also { title ->
                     if (title.isNotBlank()) this@refreshPanel.refreshPanel(title)
@@ -97,7 +113,7 @@ class App : Application() {
     }
   }
 
-  fun Container.addButtons(choices: List<ChoiceTitle>, panel: Container) {
+  fun Container.addButtons(choices: List<ChoiceTitle>, mainPanel: Container) {
     choices.forEach { p ->
       button(p.choice, style = PRIMARY) {
         onClick {
@@ -120,7 +136,7 @@ class App : Application() {
 
           AppScope.launch {
             dialog.getResult()?.also { response ->
-              if (response.isNotBlank()) panel.refreshPanel(p.title)
+              if (response.isNotBlank()) mainPanel.refreshPanel(p.title)
             }
           }
         }

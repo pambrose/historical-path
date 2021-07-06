@@ -43,6 +43,17 @@ object Slides {
 
     slide("Warm Jacket1") {
       content = "Description for Warm Jacket1"
+
+      choice("Red Jacket", "Red Jacket")
+      choice("Blue Jacket", "Blue Jacket")
+    }
+
+    slide("Red Jacket") {
+      content = "Description for Red Jacket"
+    }
+
+    slide("Blue Jacket") {
+      content = "Description for Blue Jacket"
     }
 
     slide("Warm Jacket2") {

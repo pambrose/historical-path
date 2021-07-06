@@ -4,9 +4,7 @@ import com.github.pambrose.Slide.Companion.findSlide
 import org.jetbrains.annotations.NotNull
 
 actual class ContentService : IContentService {
-  init {
-    //println("Created ContentService")
-  }
+  override suspend fun title(title: String): @NotNull String = findSlide(title).title
 
   override suspend fun content(title: String): @NotNull String {
     val escaped = findSlide(title).content
@@ -14,9 +12,7 @@ actual class ContentService : IContentService {
       .replace(">", gtEscape)
     return MarkdownParser.toHtml(escaped)
       .replace(ltEscape, "<")
-      .replace(gtEscape, ">").also {
-        println("Returning $it")
-      }
+      .replace(gtEscape, ">")
   }
 
   override suspend fun choices(title: String) =
@@ -25,15 +21,16 @@ actual class ContentService : IContentService {
   override suspend fun choiceOrientation(title: String): @NotNull ChoiceOrientation =
     findSlide(title).choiceOrientation
 
-  override suspend fun parentTitles(title: String): List<String> {
-    val parentTitles = mutableListOf<String>()
-    var currSlide = findSlide(title).parentSlide
-    while (currSlide != null) {
-      parentTitles += currSlide.title
-      currSlide = currSlide.parentSlide
-    }
-    return parentTitles
-  }
+  override suspend fun parentTitles(title: String): @NotNull List<String> =
+    mutableListOf<String>()
+      .also { parentTitles ->
+        var currSlide = findSlide(title).parentSlide
+        while (currSlide != null) {
+          parentTitles += currSlide.title
+          currSlide = currSlide.parentSlide
+        }
+      }
+      .reversed()
 
   companion object {
     val ltEscape = "---LT---"
