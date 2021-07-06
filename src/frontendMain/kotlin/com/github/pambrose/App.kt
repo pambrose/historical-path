@@ -1,11 +1,11 @@
 package com.github.pambrose
 
+import com.github.pambrose.ChoiceOrientation.VERTICAL
 import io.kvision.Application
 import io.kvision.core.Container
 import io.kvision.form.text.Text
 import io.kvision.html.Button
-import io.kvision.html.ButtonStyle.OUTLINESECONDARY
-import io.kvision.html.ButtonStyle.PRIMARY
+import io.kvision.html.ButtonStyle.*
 import io.kvision.html.P
 import io.kvision.html.button
 import io.kvision.html.div
@@ -28,10 +28,32 @@ val AppScope = CoroutineScope(window.asCoroutineDispatcher())
 
 class App : Application() {
 
-  suspend fun assignPanel(title: String, panel: VPanel) {
+  override fun start(state: Map<String, Any>) {
+    I18n.manager =
+      DefaultI18nManager(
+        mapOf(
+          "en" to io.kvision.require("i18n/messages-en.json"),
+          "pl" to io.kvision.require("i18n/messages-pl.json")
+        )
+      )
+
+    val root = root("kvapp") {}
+
+    AppScope.launch {
+      val panel = VPanel()
+      root.add(
+        VPanel {
+          add(panel)
+        })
+      assignPanel("/", panel)
+    }
+  }
+
+  suspend fun assignPanel(title: String, panel: Container) {
     val content = Model.content(title)
-    val choiceOrientation = Model.choiceOrientation(title)
     val choices = Model.choices(title)
+    val choiceOrientation = Model.choiceOrientation(title)
+    val parentTitles = Model.parentTitles(title)
     panel.apply {
       removeAll()
       div {
@@ -41,15 +63,46 @@ class App : Application() {
           add(P(content, true))
         }
 
-        if (choiceOrientation == ChoiceOrientation.VERTICAL)
-          vPanel(spacing = 4) { addContent(choices, panel) }
+        if (choiceOrientation == VERTICAL)
+          vPanel(spacing = 4) { addButtons(choices, panel) }
         else
-          hPanel(spacing = 4) { addContent(choices, panel) }
+          hPanel(spacing = 4) { addButtons(choices, panel) }
+
+        if (parentTitles.isNotEmpty()) {
+          div {
+            marginTop = 10.px
+
+            vPanel {
+              button("Go Back In Time...", style = SUCCESS) {
+                onClick {
+                  val dialog =
+                    Dialog<String>("Go Back To...") {
+                      vPanel(spacing = 4) {
+                        parentTitles.forEach { title ->
+                          button(title, style = PRIMARY) {
+                            onClick {
+                              setResult(title)
+                            }
+                          }
+                        }
+                      }
+                    }
+                  AppScope.launch {
+                    dialog.getResult()?.also { title ->
+                      if (title.isNotBlank())
+                        assignPanel(title, panel)
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
 
-  fun Container.addContent(choices: List<ChoiceTitle>, panel: VPanel) {
+  fun Container.addButtons(choices: List<ChoiceTitle>, panel: Container) {
     choices.forEach { p ->
       button(p.choice, style = PRIMARY) {
         onClick {
@@ -71,34 +124,13 @@ class App : Application() {
             }
 
           AppScope.launch {
-            dialog.getResult().also {
-              if (!it.isNullOrBlank())
+            dialog.getResult()?.also { response ->
+              if (response.isNotBlank())
                 assignPanel(p.title, panel)
             }
           }
         }
       }
-    }
-  }
-
-  override fun start(state: Map<String, Any>) {
-    I18n.manager =
-      DefaultI18nManager(
-        mapOf(
-          "en" to io.kvision.require("i18n/messages-en.json"),
-          "pl" to io.kvision.require("i18n/messages-pl.json")
-        )
-      )
-
-    val root = root("kvapp") {}
-
-    AppScope.launch {
-      val panel = VPanel()
-      root.add(
-        VPanel {
-          add(panel)
-        })
-      assignPanel("/", panel)
     }
   }
 }

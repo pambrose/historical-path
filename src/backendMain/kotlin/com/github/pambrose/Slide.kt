@@ -29,7 +29,8 @@ class Slide(val title: String) {
     fun verifySlides() {
       allSlides.forEach { title, slide ->
         slide.choices.forEach { choice, destination ->
-          val destSlide = allSlides[destination] ?: throw IllegalArgumentException("Invalid slide title: $destination")
+          val destSlide =
+            allSlides[destination] ?: throw IllegalArgumentException("Missing slide with title: $destination")
           if (destSlide.parentSlide != null)
             throw IllegalArgumentException("Parent slide already assigned to : $destination")
           destSlide.parentSlide = slide

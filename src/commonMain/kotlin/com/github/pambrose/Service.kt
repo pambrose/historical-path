@@ -8,6 +8,7 @@ interface IContentService {
   suspend fun content(title: String): String
   suspend fun choices(title: String): List<ChoiceTitle>
   suspend fun choiceOrientation(title: String): ChoiceOrientation
+  suspend fun parentTitles(title: String): List<String>
 }
 
 @Serializable

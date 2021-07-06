@@ -5,4 +5,5 @@ object Model {
   suspend fun content(title: String) = contentService.content(title)
   suspend fun choices(title: String) = contentService.choices(title)
   suspend fun choiceOrientation(title: String) = contentService.choiceOrientation(title)
+  suspend fun parentTitles(title: String) = contentService.parentTitles(title)
 }
