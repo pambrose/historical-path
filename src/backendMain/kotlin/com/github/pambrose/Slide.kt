@@ -2,8 +2,9 @@ package com.github.pambrose
 
 class Slide(val title: String) {
   var parentSlide: Slide? = null
-  var content: String = ""
   val choices = mutableMapOf<String, String>()
+  var content: String = ""
+  var choiceOrientation: ChoiceOrientation = ChoiceOrientation.VERTICAL
 
   init {
     require(title !in allSlides.keys) { "Slide titles must be unique: $title" }

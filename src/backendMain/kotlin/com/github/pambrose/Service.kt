@@ -24,6 +24,9 @@ actual class ContentService : IContentService {
   override suspend fun choices(title: String) =
     findSlide(title).choices.map { (choice, destination) -> ChoiceTitle(choice, destination) }
 
+  override suspend fun choiceOrientation(title: String): @NotNull ChoiceOrientation =
+    findSlide(title).choiceOrientation
+
   companion object {
     val rootSlide = "Season to Leave"
 
@@ -46,6 +49,8 @@ actual class ContentService : IContentService {
 
       slide("SpringClothing Choice") {
         content = """# I am in Spring Choice"""
+        choiceOrientation = ChoiceOrientation.HORIZONTAL
+
         choice("Clothing Choice 1", "Warm Jacket1")
         choice("Clothing Choice 2", "Warm Jacket2")
         choice("Clothing Choice 3", "Warm Jacket3")
