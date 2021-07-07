@@ -2,13 +2,10 @@ package com.github.pambrose
 
 import com.github.pambrose.ChoiceOrientation.VERTICAL
 import io.kvision.Application
-import io.kvision.core.Background
-import io.kvision.core.Border
+import io.kvision.core.*
 import io.kvision.core.BorderStyle.SOLID
 import io.kvision.core.Col.GRAY
 import io.kvision.core.Col.WHITE
-import io.kvision.core.Color
-import io.kvision.core.Container
 import io.kvision.form.text.Text
 import io.kvision.html.*
 import io.kvision.html.ButtonStyle.*
@@ -64,10 +61,11 @@ class App : Application() {
     div {
       margin = 10.px
 
-      div {
+      h1 {
         background = Background(Color.rgb(53, 121, 246))
         color = Color.name(WHITE)
-        h1 { +title }
+        textAlign = TextAlign.CENTER
+        +title
       }
 
       div {
