@@ -93,6 +93,7 @@ kotlin {
                 implementation(kotlin("reflect"))
                 implementation("io.ktor:ktor-server-netty:$ktorVersion")
                 implementation("io.ktor:ktor-auth:$ktorVersion")
+                implementation("io.ktor:ktor-server-sessions:$ktorVersion")
                 implementation("ch.qos.logback:logback-classic:$logbackVersion")
                 implementation("com.h2database:h2:$h2Version")
                 implementation("org.jetbrains.exposed:exposed:$exposedVersion")
