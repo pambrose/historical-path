@@ -2,26 +2,34 @@ package com.github.pambrose
 
 import com.github.pambrose.Slide.Companion.slide
 
-object Slides {
-  fun initData() {
+object Content {
+  fun initContent() {
     slide("Season to Leave") {
       content =
         """
-            <h1>Straight HTML</h1>
-            # I am a header 
+            <h1>Welcome to this lesson</h1>
             ## I am a header 
-            ### I am a header 
-            *Italics* **bold**
+            ### I am a smaller header 
+            
+            Here are some bullet points:
+            * Item 1 with *italics*
+            * Item 2 with **bold**
+            
+            When will you choose to leave?
         """
 
-      choice("Spring", "SpringClothing Choice")
-      choice("Summer", "Description for Summer")
-      choice("Fall", "Description for Fall")
-      choice("Winter", "Description for Winter")
+      choice("Spring", "Spring Choice")
+      choice("Summer", "Summer Choice")
+      choice("Fall", "Fall Choice")
+      choice("Winter", "Winter Choice")
     }
 
-    slide("SpringClothing Choice") {
-      content = """# I am in Spring Choice"""
+    slide("Spring Choice") {
+      content = """
+        # This is the spring choice slide
+        
+        Here are the choices of clothing:
+      """
       choiceOrientation = ChoiceOrientation.HORIZONTAL
 
       choice("Clothing Choice 1", "Warm Jacket1")
@@ -29,16 +37,16 @@ object Slides {
       choice("Clothing Choice 3", "Warm Jacket3")
     }
 
-    slide("Description for Summer") {
-      content = "Description for Summer"
+    slide("Summer Choice") {
+      content = "Summer Slide"
     }
 
-    slide("Description for Fall") {
-      content = "Description for Fall"
+    slide("Fall Choice") {
+      content = "Fall Slide"
     }
 
-    slide("Description for Winter") {
-      content = "Description for Winter"
+    slide("Winter Choice") {
+      content = "Winter Slide"
     }
 
     slide("Warm Jacket1") {

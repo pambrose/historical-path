@@ -7,7 +7,7 @@ import io.kvision.remote.applyRoutes
 import io.kvision.remote.kvisionInit
 
 fun Application.main() {
-  Slides.initData()
+  Content.initContent()
   Slide.verifySlides()
 
   install(Compression)

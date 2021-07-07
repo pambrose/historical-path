@@ -89,10 +89,10 @@ class App : Application() {
           marginTop = 10.px
 
           vPanel {
-            button("Go Back In Time...", style = SUCCESS) {
+            button("Go Back In Time", style = SUCCESS) {
               onClick {
                 val dialog =
-                  Dialog<String>("Go Back To...") {
+                  Dialog<String>("Go back to...") {
                     vPanel(spacing = 4) {
                       parentTitles.forEach { title ->
                         button(title, style = PRIMARY) { onClick { setResult(title) } }
