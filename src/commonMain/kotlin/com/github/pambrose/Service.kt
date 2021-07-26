@@ -12,6 +12,11 @@ interface IContentService {
   suspend fun parentTitles(title: String): List<String>
 }
 
+@KVService
+interface IUserService {
+  suspend fun choose(user: String, fromTitle: String, toTitle: String, choice: String, reason: String): String
+}
+
 @Serializable
 class ChoiceTitle(val choice: String, val title: String)
 

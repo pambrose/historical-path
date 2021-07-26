@@ -28,121 +28,126 @@ val AppScope = CoroutineScope(window.asCoroutineDispatcher())
 
 class App : Application() {
 
-  override fun start(state: Map<String, Any>) {
-    I18n.manager =
-      DefaultI18nManager(
-        mapOf(
-          "en" to io.kvision.require("i18n/messages-en.json"),
-          "pl" to io.kvision.require("i18n/messages-pl.json")
-        )
-      )
+    override fun start(state: Map<String, Any>) {
+        I18n.manager =
+            DefaultI18nManager(
+                mapOf(
+                    "en" to io.kvision.require("i18n/messages-en.json"),
+                    "pl" to io.kvision.require("i18n/messages-pl.json")
+                )
+            )
 
-    val root = root("kvapp") {}
+        val root = root("kvapp") {}
 
-    AppScope.launch {
-      val panel = VPanel()
-      root.add(
-        VPanel {
-          add(panel)
-        })
-      panel.refreshPanel("/")
+        AppScope.launch {
+            val panel = VPanel()
+            root.add(
+                VPanel {
+                    add(panel)
+                })
+            panel.refreshPanel("/")
+        }
     }
-  }
 
-  suspend fun Container.refreshPanel(name: String) {
-    val title = Model.title(name)
-    val content = Model.content(name)
-    val choices = Model.choices(name)
-    val choiceOrientation = Model.choiceOrientation(name)
-    val parentTitles = Model.parentTitles(name)
+    suspend fun Container.refreshPanel(name: String) {
+        val title = Model.title(name)
+        val content = Model.content(name)
+        val choices = Model.choices(name)
+        val choiceOrientation = Model.choiceOrientation(name)
+        val parentTitles = Model.parentTitles(name)
 
-    removeAll()
+        removeAll()
 
-    div {
-      margin = 10.px
-
-      h1 {
-        background = Background(Color.rgb(53, 121, 246))
-        color = Color.name(WHITE)
-        textAlign = TextAlign.CENTER
-        +title
-      }
-
-      div {
-        border = Border(2.px, SOLID, Color.name(GRAY))
-        padding = 25.px
-        add(P(content, true))
-      }
-
-      div {
-        marginTop = 10.px
-        if (choiceOrientation == VERTICAL)
-          vPanel(spacing = 4) { addButtons(choices, this@refreshPanel) }
-        else
-          hPanel(spacing = 4) { addButtons(choices, this@refreshPanel) }
-      }
-
-      if (parentTitles.isNotEmpty()) {
         div {
-          marginTop = 10.px
+            margin = 10.px
 
-          vPanel {
-            button("Go Back In Time", style = SUCCESS) {
-              onClick {
-                val dialog =
-                  Dialog<String>("Go back to...") {
-                    vPanel(spacing = 4) {
-                      parentTitles.forEach { title ->
-                        button(title, style = PRIMARY) { onClick { setResult(title) } }
-                      }
+            h1 {
+                background = Background(Color.rgb(53, 121, 246))
+                color = Color.name(WHITE)
+                textAlign = TextAlign.CENTER
+                +title
+            }
+
+            div {
+                border = Border(2.px, SOLID, Color.name(GRAY))
+                padding = 25.px
+                add(P(content, true))
+            }
+
+            div {
+                marginTop = 10.px
+                val spacing = 4
+                val init: Container.() -> Unit = { addButtons(title, choices, this@refreshPanel) }
+                if (choiceOrientation == VERTICAL)
+                    vPanel(spacing = spacing, init = init)
+                else
+                    hPanel(spacing = spacing, init = init)
+            }
+
+            if (parentTitles.isNotEmpty()) {
+                div {
+                    marginTop = 10.px
+
+                    vPanel {
+                        button("Go Back In Time", style = SUCCESS) {
+                            onClick {
+                                val dialog =
+                                    Dialog<String>("Go back to...") {
+                                        vPanel(spacing = 4) {
+                                            parentTitles.forEach { title ->
+                                                button(title, style = PRIMARY) { onClick { setResult(title) } }
+                                            }
+                                        }
+                                    }
+
+                                AppScope.launch {
+                                    dialog.getResult()?.also { title ->
+                                        if (title.isNotBlank()) this@refreshPanel.refreshPanel(title)
+                                    }
+                                }
+                            }
+                        }
                     }
-                  }
-
-                AppScope.launch {
-                  dialog.getResult()?.also { title ->
-                    if (title.isNotBlank()) this@refreshPanel.refreshPanel(title)
-                  }
                 }
-              }
             }
-          }
         }
-      }
     }
-  }
 
-  fun Container.addButtons(choices: List<ChoiceTitle>, mainPanel: Container) {
-    choices.forEach { ct ->
-      button(ct.choice, style = PRIMARY) {
-        onClick {
-          val submit = Button("OK", disabled = true)
-          val dialog =
-            Dialog<String>("Reasoning") {
-              val input =
-                Text(label = "Reason for your decision:") {
-                  placeholder = """I chose "${ct.choice}" because..."""
-                  setEventListener<Text> {
-                    keyup = { e ->
-                      submit.disabled = value.isNullOrBlank()
+    fun Container.addButtons(title: String, choices: List<ChoiceTitle>, mainPanel: Container) {
+        choices.forEach { ct ->
+            button(ct.choice, style = PRIMARY) {
+                onClick {
+                    val submit = Button("OK", disabled = true)
+                    val dialog =
+                        Dialog<String>("Reasoning") {
+                            val input =
+                                Text(label = "Reason for your decision:") {
+                                    placeholder = """I chose "${ct.choice}" because..."""
+                                    setEventListener<Text> {
+                                        keyup = { e ->
+                                            submit.disabled = value.isNullOrBlank()
+                                        }
+                                    }
+                                }
+                            add(input)
+                            addButton(Button("Cancel", style = OUTLINESECONDARY).also { it.onClick { setResult("") } })
+                            addButton(submit.also { it.onClick { setResult(input.value) } })
+                        }
+
+                    AppScope.launch {
+                        dialog.getResult()?.also { response ->
+                            if (response.isNotBlank()) {
+                                Model.choose("user1", title, ct.title, ct.choice, response)
+                                mainPanel.refreshPanel(ct.title)
+                            }
+                        }
                     }
-                  }
                 }
-              add(input)
-              addButton(Button("Cancel", style = OUTLINESECONDARY).also { it.onClick { setResult("") } })
-              addButton(submit.also { it.onClick { setResult(input.value) } })
             }
-
-          AppScope.launch {
-            dialog.getResult()?.also { response ->
-              if (response.isNotBlank()) mainPanel.refreshPanel(ct.title)
-            }
-          }
         }
-      }
     }
-  }
 }
 
 fun main() {
-  startApplication(::App, module.hot)
+    startApplication(::App, module.hot)
 }

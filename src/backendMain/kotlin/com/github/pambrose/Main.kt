@@ -11,28 +11,29 @@ import io.kvision.remote.kvisionInit
 data class UserSession(val id: String, val count: Int)
 
 fun Application.main() {
-  Content.initContent()
-  Slide.verifySlides()
+    Content.initContent()
+    Slide.verifySlides()
 
-  install(Compression)
+    install(Compression)
 
-  install(Sessions) {
-    cookie<UserSession>("user_session") {
-      cookie.path = "/"
-      cookie.maxAgeInSeconds = 60
-    }
-  }
-
-  routing {
-    applyRoutes(ContentServiceManager)
-
-    get("/here") {
-      call.respondText("I am here.")
+    install(Sessions) {
+        cookie<UserSession>("user_session") {
+            cookie.path = "/"
+            cookie.maxAgeInSeconds = 60
+        }
     }
 
-    get("/doit") {
-      call.respondRedirect("/play")
+    routing {
+        applyRoutes(ContentServiceManager)
+        applyRoutes(UserServiceManager)
+
+        get("/here") {
+            call.respondText("I am here.")
+        }
+
+        get("/doit") {
+            call.respondRedirect("/play")
+        }
     }
-  }
-  kvisionInit()
+    kvisionInit()
 }
