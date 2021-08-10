@@ -17,7 +17,6 @@ group = "com.github.pambrose"
 
 repositories {
     mavenCentral()
-    jcenter()
     mavenLocal()
 }
 
