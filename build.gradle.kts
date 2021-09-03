@@ -18,6 +18,8 @@ group = "com.github.pambrose"
 repositories {
     mavenCentral()
     mavenLocal()
+    jcenter()
+    maven { url = uri("https://jitpack.io") }
 }
 
 // Versions
@@ -33,6 +35,7 @@ val flexmarkVersion: String by project
 val logbackVersion: String by project
 val commonsCodecVersion: String by project
 val jdbcNamedParametersVersion: String by project
+val utilsVersion: String by project
 
 val webDir = file("src/frontendMain/web")
 val mainClassName = "io.ktor.server.netty.EngineMain"
@@ -102,6 +105,8 @@ kotlin {
                 implementation("com.axiomalaska:jdbc-named-parameters:$jdbcNamedParametersVersion")
                 implementation("com.github.andrewoma.kwery:core:$kweryVersion")
                 implementation("com.vladsch.flexmark:flexmark:$flexmarkVersion")
+                implementation("com.github.pambrose.common-utils:core-utils:$utilsVersion")
+                implementation("com.github.pambrose.common-utils:ktor-server-utils:$utilsVersion")
             }
         }
         val backendTest by getting {

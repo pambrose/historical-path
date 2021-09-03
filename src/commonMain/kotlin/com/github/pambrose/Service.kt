@@ -10,6 +10,7 @@ interface IContentService {
   suspend fun choices(title: String): List<ChoiceTitle>
   suspend fun choiceOrientation(title: String): ChoiceOrientation
   suspend fun parentTitles(title: String): List<String>
+  suspend fun currentScore(): Int
 }
 
 @KVService

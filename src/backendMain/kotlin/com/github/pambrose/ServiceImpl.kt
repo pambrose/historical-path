@@ -32,6 +32,10 @@ actual class ContentService : IContentService {
       }
       .reversed()
 
+  override suspend fun currentScore(): Int {
+    return 5
+  }
+
   companion object {
     val ltEscape = "---LT---"
     val gtEscape = "---GT---"

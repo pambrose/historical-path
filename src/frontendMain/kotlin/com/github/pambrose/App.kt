@@ -55,11 +55,20 @@ class App : Application() {
     val choices = Model.choices(name)
     val choiceOrientation = Model.choiceOrientation(name)
     val parentTitles = Model.parentTitles(name)
+    val currentScore = Model.currentScore()
 
     removeAll()
 
     div {
       margin = 10.px
+
+      div {
+        border = Border(2.px, SOLID, Color.name(Col.WHITE))
+        paddingTop = 5.px
+        paddingBottom = 5.px
+        textAlign = TextAlign.LEFT
+        +"Total moves: $currentScore"
+      }
 
       h1 {
         background = Background(Color.rgb(53, 121, 246))
@@ -131,7 +140,11 @@ class App : Application() {
                 }
               add(input)
               addButton(Button("Cancel", style = OUTLINESECONDARY).also { it.onClick { setResult("") } })
-              addButton(submit.also { it.onClick { setResult(input.value) } })
+              addButton(submit.also {
+                it.onClick {
+                  setResult(input.value)
+                }
+              })
             }
 
           AppScope.launch {
